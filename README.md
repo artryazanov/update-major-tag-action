@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # ⚠️ Required: Must fetch all history to work with tags properly
 
@@ -39,7 +39,7 @@ jobs:
 
 ## ⚠️ Important Requirements
 
-1. **`actions/checkout@v4` with `fetch-depth: 0`**: The action needs the full Git history and tags downloaded to forcefully move the tag to the correct commit.
+1. **`actions/checkout@v6` with `fetch-depth: 0`**: The action needs the full Git history and tags downloaded to forcefully move the tag to the correct commit.
 2. **Permissions**: The job requires `permissions: { contents: write }` so the GitHub Actions bot can push the new tag to your repository.
 
 ## 📝 License
