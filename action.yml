@@ -1,0 +1,41 @@
+name: 'Update Major Tag'
+description: 'Automatically forces a major version tag (e.g., v1) to point to the latest release.'
+author: 'Artem Ryazanov'
+
+branding:
+  icon: 'tag'
+  color: 'blue'
+
+inputs:
+  tag:
+    description: 'The full semantic version tag to parse (e.g., v1.2.3). Defaults to the current ref.'
+    required: false
+    default: ${{ github.ref_name }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update Major Version Tag
+      shell: bash
+      run: |
+        TAG="${{ inputs.tag }}"
+        
+        # Extract the major version (supports formats 'v1.2.3' -> 'v1' and '1.2.3' -> '1')
+        MAJOR_TAG=$(echo "$TAG" | grep -oE '^(v)?[0-9]+')
+        
+        if [ -z "$MAJOR_TAG" ]; then
+          echo "::warning::Failed to extract major version from tag '$TAG'. Expected format like 'v1.2.3'. Skipping."
+          exit 0
+        fi
+        
+        echo "::notice::Moving major tag '$MAJOR_TAG' to point to '$TAG'..."
+        
+        # Configure Git as the official GitHub Actions bot
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # Forcefully create the tag locally on the same commit
+        git tag -f "$MAJOR_TAG" "$TAG"
+        
+        # Push the updated tag to the repository
+        git push origin -f "$MAJOR_TAG"

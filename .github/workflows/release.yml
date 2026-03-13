@@ -1,0 +1,23 @@
+name: Release Tag Updater
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-own-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Use the local version of the action (from the ./ folder) to update its own tags
+      - name: Update Major Tag
+        uses: ./
+        with:
+          tag: ${{ github.event.release.tag_name }}
